@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  CalcSheet: sheet-2024-metro
+  Region:    METRO (France métropolitaine, hors Alsace et Moselle)
+  Period:    2024-01-01 → open-ended
+
+  Decision naming convention: {REVENUE_NATURE}_{CHARGE_CATEGORY}
+  e.g. BICP_COTISATION, BNC_TAXE, BICV_CFP, …
+
+  Each decision table uses hit policy COLLECT and returns a list of CTP codes.
+  One row = one CTP applicable when all input conditions are satisfied.
+
+  Input variables injected from CalcContext (see LoadedSheet.buildDmnContext):
+    mainActivity              : string  — "ARTISANAL" | "COMMERCIAL" | "LIBERAL" | "LIBERAL_NR"
+    hasPLF                    : boolean — true if option PLF is active
+    activityDate              : date    — date of the CA being calculated
+    exemptions                : list    — [{type, startDate, endDate}]
+    totalPreviousYearRevenue  : number  — total CA of the preceding year
+    previousYearRevenue_BICP  : number  — CA BICP of the preceding year
+    previousYearRevenue_BICV  : number  — CA BICV of the preceding year
+    previousYearRevenue_BNC   : number  — CA BNC of the preceding year
+    previousYearRevenue_LMTC  : number  — CA LMTC of the preceding year
+
+  FEEL helper for date-aware exemption check:
+    some e in exemptions satisfies (e.type = "ACRE" and e.startDate <= activityDate and activityDate <= e.endDate)
+-->
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             id="sheet-2024-metro"
+             name="sheet-2024-metro"
+             namespace="https://dmca-calculator.fr/rules/2024/metro">
+
+  <!-- ── Input data declarations ───────────────────────────────────────────── -->
+
+  <inputData id="id_mainActivity"             name="mainActivity"/>
+  <inputData id="id_hasPLF"                   name="hasPLF"/>
+  <inputData id="id_activityDate"             name="activityDate"/>
+  <inputData id="id_exemptions"               name="exemptions"/>
+  <inputData id="id_totalPrevRevenue"         name="totalPreviousYearRevenue"/>
+  <inputData id="id_prevRevBICP"              name="previousYearRevenue_BICP"/>
+  <inputData id="id_prevRevBICV"              name="previousYearRevenue_BICV"/>
+  <inputData id="id_prevRevBNC"               name="previousYearRevenue_BNC"/>
+  <inputData id="id_prevRevLMTC"              name="previousYearRevenue_LMTC"/>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════
+       BICP — Bénéfices industriels et commerciaux, Prestation de services
+       ══════════════════════════════════════════════════════════════════════════ -->
+
+  <!-- BICP × COTISATION -->
+  <decision id="BICP_COTISATION" name="BICP_COTISATION">
+    <informationRequirement><requiredInput href="#id_mainActivity"/></informationRequirement>
+    <informationRequirement><requiredInput href="#id_exemptions"/></informationRequirement>
+    <informationRequirement><requiredInput href="#id_activityDate"/></informationRequirement>
+    <decisionTable id="dt_BICP_COTISATION" hitPolicy="COLLECT">
+      <input id="in_bc_activity" label="mainActivity">
+        <inputExpression typeRef="string"><text>mainActivity</text></inputExpression>
+      </input>
+      <input id="in_bc_hasACRE" label="has active ACRE exemption">
+        <inputExpression typeRef="boolean">
+          <text>some e in exemptions satisfies (e.type = "ACRE" and e.startDate &lt;= activityDate and activityDate &lt;= e.endDate)</text>
+        </inputExpression>
+      </input>
+      <output id="out_bc_ctp" name="CTP" typeRef="string"/>
+      <!-- ── Rules: add one row per applicable CTP ─────────────────────────── -->
+      <!-- Standard BICP cotisation — all activities, no ACRE -->
+      <rule id="bc_r1"><inputEntry><text>"ARTISANAL","COMMERCIAL","LIBERAL","LIBERAL_NR"</text></inputEntry><inputEntry><text>false</text></inputEntry><outputEntry><text>"CTP500"</text></outputEntry></rule>
+      <rule id="bc_r2"><inputEntry><text>"ARTISANAL","COMMERCIAL","LIBERAL","LIBERAL_NR"</text></inputEntry><inputEntry><text>false</text></inputEntry><outputEntry><text>"CTP600"</text></outputEntry></rule>
+      <!-- TODO: add ACRE-reduced rates, activity-specific CTPs -->
+    </decisionTable>
+  </decision>
+
+  <!-- BICP × TAXE -->
+  <decision id="BICP_TAXE" name="BICP_TAXE">
+    <informationRequirement><requiredInput href="#id_hasPLF"/></informationRequirement>
+    <decisionTable id="dt_BICP_TAXE" hitPolicy="COLLECT">
+      <input id="in_bt_plf" label="hasPLF">
+        <inputExpression typeRef="boolean"><text>hasPLF</text></inputExpression>
+      </input>
+      <output id="out_bt_ctp" name="CTP" typeRef="string"/>
+      <!-- PLF (Prélèvement Libératoire Forfaitaire) replaces standard income tax -->
+      <!-- TODO: add CTP codes for PLF and non-PLF income tax -->
+    </decisionTable>
+  </decision>
+
+  <!-- BICP × CFP -->
+  <decision id="BICP_CFP" name="BICP_CFP">
+    <informationRequirement><requiredInput href="#id_mainActivity"/></informationRequirement>
+    <decisionTable id="dt_BICP_CFP" hitPolicy="COLLECT">
+      <input id="in_bcfp_activity" label="mainActivity">
+        <inputExpression typeRef="string"><text>mainActivity</text></inputExpression>
+      </input>
+      <output id="out_bcfp_ctp" name="CTP" typeRef="string"/>
+      <rule id="bcfp_r1"><inputEntry><text>"ARTISANAL","COMMERCIAL","LIBERAL","LIBERAL_NR"</text></inputEntry><outputEntry><text>"CTP700"</text></outputEntry></rule>
+    </decisionTable>
+  </decision>
+
+  <!-- BICP × CCICMA -->
+  <decision id="BICP_CCICMA" name="BICP_CCICMA">
+    <informationRequirement><requiredInput href="#id_mainActivity"/></informationRequirement>
+    <decisionTable id="dt_BICP_CCICMA" hitPolicy="COLLECT">
+      <input id="in_bcc_activity" label="mainActivity">
+        <inputExpression typeRef="string"><text>mainActivity</text></inputExpression>
+      </input>
+      <output id="out_bcc_ctp" name="CTP" typeRef="string"/>
+      <rule id="bcc_r1"><inputEntry><text>"ARTISANAL"</text></inputEntry><outputEntry><text>"CTP800"</text></outputEntry></rule>
+      <!-- COMMERCIAL and LIBERAL: no CCICMA for BICP — no rule needed (COLLECT returns empty) -->
+    </decisionTable>
+  </decision>
+
+  <!--
+    TODO: replicate the 4-decision pattern for BICV, BNC, LMTC.
+    Decisions to add:
+      BICV_COTISATION, BICV_TAXE, BICV_CFP, BICV_CCICMA
+      BNC_COTISATION,  BNC_TAXE,  BNC_CFP,  BNC_CCICMA
+      LMTC_COTISATION, LMTC_TAXE, LMTC_CFP  (LMTC has no CCICMA)
+  -->
+
+</definitions>

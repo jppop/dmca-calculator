@@ -1,0 +1,6 @@
+id: sheet-2024-metro
+region: METRO
+startDate: "2024-01-01"
+# endDate omitted — this is the most recent sheet for METRO
+dmnNamespace: "https://dmca-calculator.fr/rules/2024/metro"
+dmnModelName: "sheet-2024-metro"

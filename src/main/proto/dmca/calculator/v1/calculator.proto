@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package dmca.calculator.v1;
+
+option java_package = "fr.dmca.calculator.grpc";
+option java_outer_classname = "CalculatorProto";
+option java_multiple_files = true;
+
+service CalculatorService {
+  rpc Calculate(CalcRequest) returns (CalcResponse);
+}
+
+// ── Enumerations ──────────────────────────────────────────────────────────────
+
+enum Region {
+  REGION_UNSPECIFIED = 0;
+  METRO    = 1;  // France métropolitaine, hors Alsace et Moselle
+  ALSACE   = 2;  // Départements 67 (Bas-Rhin) et 68 (Haut-Rhin)
+  MOSELLE  = 3;  // Département 57 — régime local Alsace-Moselle
+  DROM     = 4;  // Départements et régions d'outre-mer, hors Mayotte
+  MAYOTTE  = 5;
+}
+
+enum ActivityType {
+  ACTIVITY_TYPE_UNSPECIFIED = 0;
+  ARTISANAL  = 1;
+  COMMERCIAL = 2;
+  LIBERAL    = 3;
+  LIBERAL_NR = 4;  // libéral non réglementé
+}
+
+enum RevenueNature {
+  REVENUE_NATURE_UNSPECIFIED = 0;
+  BICP = 1;  // Bénéfices industriels et commerciaux — Prestation
+  BICV = 2;  // Bénéfices industriels et commerciaux — Ventes
+  BNC  = 3;  // Bénéfices Non Commerciaux
+  LMTC = 4;  // Location de Meublé de Tourisme non Classé
+}
+
+enum ChargeCategory {
+  CHARGE_CATEGORY_UNSPECIFIED = 0;
+  COTISATION = 1;  // cotisations sociales
+  TAXE       = 2;  // impôt sur le revenu
+  CFP        = 3;  // contribution à la formation professionnelle
+  CCICMA     = 4;  // Chambre d'Industrie/Commerce et Chambre de Métiers/Artisanat
+}
+
+// ── Request / Response ────────────────────────────────────────────────────────
+
+message CalcRequest {
+  ActivityType        main_activity          = 1;
+  Region              region                 = 2;
+  string              activity_date          = 3;  // ISO-8601 "YYYY-MM-DD"
+  repeated RevenueEntry revenues             = 4;
+  repeated string     options                = 5;  // e.g. "PLF"
+  repeated Exemption  exemptions             = 6;
+  repeated RevenueEntry previous_year_revenues = 7;  // optional; one entry per nature
+}
+
+message RevenueEntry {
+  RevenueNature revenue_nature = 1;
+  string        amount         = 2;  // BigDecimal as string, e.g. "1250.00"
+}
+
+message Exemption {
+  string type       = 1;
+  string start_date = 2;  // ISO-8601
+  string end_date   = 3;  // ISO-8601; empty = open-ended
+}
+
+message CalcResponse {
+  repeated RevenueResult results = 1;
+}
+
+message RevenueResult {
+  RevenueNature          revenue_nature = 1;
+  string                 amount         = 2;
+  repeated ChargeResult  charges        = 3;
+}
+
+message ChargeResult {
+  ChargeCategory      category     = 1;
+  string              total_rate   = 2;  // sum of CTP rates, BigDecimal as string
+  string              total_amount = 3;  // BigDecimal as string
+  repeated CtpResult  ctps         = 4;
+}
+
+message CtpResult {
+  string code   = 1;
+  string rate   = 2;  // BigDecimal as string
+  string amount = 3;  // BigDecimal as string
+}

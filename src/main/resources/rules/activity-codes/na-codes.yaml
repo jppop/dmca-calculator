@@ -1,0 +1,14 @@
+# Mapping of NA activity codes (used by digital platforms) to revenue natures.
+# NA codes are assigned by URSSAF and used by third-party platforms.
+
+- code: "NA01"
+  revenueNature: BICV
+
+- code: "NA02"
+  revenueNature: BICP
+
+- code: "NA03"
+  revenueNature: BNC
+
+- code: "NA04"
+  revenueNature: LMTC
