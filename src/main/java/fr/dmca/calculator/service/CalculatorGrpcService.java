@@ -1,8 +1,16 @@
 package fr.dmca.calculator.service;
 
 import fr.dmca.calculator.engine.CalculationEngine;
-import fr.dmca.calculator.grpc.*;
-import fr.dmca.calculator.model.*;
+import fr.dmca.calculator.grpc.CalcRequest;
+import fr.dmca.calculator.grpc.CalcResponse;
+import fr.dmca.calculator.grpc.CalculatorService;
+import fr.dmca.calculator.model.ActivityType;
+import fr.dmca.calculator.model.CalcContext;
+import fr.dmca.calculator.model.ChargeCategory;
+import fr.dmca.calculator.model.Exemption;
+import fr.dmca.calculator.model.Region;
+import fr.dmca.calculator.model.RevenueEntry;
+import fr.dmca.calculator.model.RevenueNature;
 import io.quarkus.grpc.GrpcService;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
