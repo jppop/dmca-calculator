@@ -86,7 +86,7 @@ message ChargeResult {
 }
 
 message CtpResult {
-  string code   = 1;
+  string code   = 1;  // 3-digit zero-padded string, e.g. "042", "500"
   string rate   = 2;  // BigDecimal as string
   string amount = 3;  // BigDecimal as string
 }

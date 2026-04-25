@@ -27,6 +27,7 @@ src/main/resources/rules/
     sheet.dmn    ← DMN 1.3 decision tables; compiled to Java at build time by Drools/Quarkus
   ctps/
     ctp-catalog.yaml   ← CTP code → time-bound rates (runtime-loaded, no rebuild needed)
+                         CTP codes are 3-digit zero-padded strings, e.g. "042", "500"
   activity-codes/
     na-codes.yaml      ← NA01..NAnn → RevenueNature mapping (runtime-loaded)
 ```

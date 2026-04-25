@@ -45,7 +45,7 @@ public class LoadedSheet {
      * evaluated against the provided CalcContext.
      *
      * The DMN decision is named "{revenueNature}_{chargeCategory}" and returns a FEEL list of
-     * CTP code strings, e.g. ["CTP500", "CTP501"].
+     * CTP code strings, e.g. ["500", "042"].
      */
     @SuppressWarnings("unchecked")
     public List<String> ctpsFor(RevenueNature nature, ChargeCategory category, CalcContext context) {

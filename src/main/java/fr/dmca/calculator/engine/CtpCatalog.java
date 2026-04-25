@@ -29,6 +29,9 @@ public class CtpCatalog {
         this.yamlMapper = yamlMapper;
     }
 
+    // CTP codes are 3-digit zero-padded numeric strings, e.g. "001", "042", "500".
+    private static final java.util.regex.Pattern CTP_CODE_FORMAT = java.util.regex.Pattern.compile("^\\d{3}$");
+
     @PostConstruct
     void load() throws IOException {
         try (InputStream is = getClass().getResourceAsStream(CATALOG_PATH)) {
@@ -36,6 +39,12 @@ public class CtpCatalog {
                 throw new IllegalStateException("CTP catalog not found at " + CATALOG_PATH);
             }
             List<CtpEntry> entries = yamlMapper.readValue(is, new TypeReference<>() {});
+            for (CtpEntry entry : entries) {
+                if (!CTP_CODE_FORMAT.matcher(entry.code()).matches()) {
+                    throw new IllegalStateException(
+                        "Invalid CTP code format: \"" + entry.code() + "\" — expected 3-digit zero-padded string (e.g. \"042\")");
+                }
+            }
             index = entries.stream().collect(Collectors.toMap(CtpEntry::code, e -> e));
             LOG.infof("CTP catalog loaded: %d entries", index.size());
         }

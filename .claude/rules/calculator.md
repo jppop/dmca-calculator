@@ -18,6 +18,7 @@ Les règles de calculs des charges sociales (cotisations, taxes et contributions
   CFP, la contribution à la formation professionnelle ; 
   CCICMA, des taxes pour les organismes professionnels (Chambre d'Industrie et du Commerce et Chambre de Métiers et de l'Artisanat).
 - Une charge sociale peut comporter plusieurs "CTP" (risque couvert par la charge).
+  Un code CTP est une chaîne numérique de 3 chiffres avec zéros de tête (ex : "042", "500").
 - A chaque CTP correspond un taux applicable au chiffre d'affaires.
 - Les valeurs des taux évoluent dans le temps (ils ont une période d'application).
 - La somme des taux de chaque CTP donne le taux appliqué au CA

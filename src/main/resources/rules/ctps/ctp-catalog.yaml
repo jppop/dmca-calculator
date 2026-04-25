@@ -5,25 +5,25 @@
 # Rate history: add a new entry with a startDate when a rate changes.
 # The endDate of the previous entry is set to the day before the new startDate.
 
-- code: CTP500
+- code: "500"
   label: "Assurance maladie-maternité — prestation de services (BICP)"
   rates:
     - startDate: "2024-01-01"
       rate: "0.073"
 
-- code: CTP600
+- code: "600"
   label: "Cotisation retraite de base — prestation de services"
   rates:
     - startDate: "2024-01-01"
       rate: "0.175"
 
-- code: CTP700
+- code: "700"
   label: "CFP — prestation de services commerciales"
   rates:
     - startDate: "2024-01-01"
       rate: "0.003"
 
-- code: CTP800
+- code: "800"
   label: "CCI-CMA — artisanal"
   rates:
     - startDate: "2024-01-01"

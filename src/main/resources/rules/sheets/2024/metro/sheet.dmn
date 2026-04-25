@@ -64,8 +64,8 @@
       <output id="out_bc_ctp" name="CTP" typeRef="string"/>
       <!-- ── Rules: add one row per applicable CTP ─────────────────────────── -->
       <!-- Standard BICP cotisation — all activities, no ACRE -->
-      <rule id="bc_r1"><inputEntry><text>"ARTISANAL","COMMERCIAL","LIBERAL","LIBERAL_NR"</text></inputEntry><inputEntry><text>false</text></inputEntry><outputEntry><text>"CTP500"</text></outputEntry></rule>
-      <rule id="bc_r2"><inputEntry><text>"ARTISANAL","COMMERCIAL","LIBERAL","LIBERAL_NR"</text></inputEntry><inputEntry><text>false</text></inputEntry><outputEntry><text>"CTP600"</text></outputEntry></rule>
+      <rule id="bc_r1"><inputEntry><text>"ARTISANAL","COMMERCIAL","LIBERAL","LIBERAL_NR"</text></inputEntry><inputEntry><text>false</text></inputEntry><outputEntry><text>"500"</text></outputEntry></rule>
+      <rule id="bc_r2"><inputEntry><text>"ARTISANAL","COMMERCIAL","LIBERAL","LIBERAL_NR"</text></inputEntry><inputEntry><text>false</text></inputEntry><outputEntry><text>"600"</text></outputEntry></rule>
       <!-- TODO: add ACRE-reduced rates, activity-specific CTPs -->
     </decisionTable>
   </decision>
@@ -91,7 +91,7 @@
         <inputExpression typeRef="string"><text>mainActivity</text></inputExpression>
       </input>
       <output id="out_bcfp_ctp" name="CTP" typeRef="string"/>
-      <rule id="bcfp_r1"><inputEntry><text>"ARTISANAL","COMMERCIAL","LIBERAL","LIBERAL_NR"</text></inputEntry><outputEntry><text>"CTP700"</text></outputEntry></rule>
+      <rule id="bcfp_r1"><inputEntry><text>"ARTISANAL","COMMERCIAL","LIBERAL","LIBERAL_NR"</text></inputEntry><outputEntry><text>"700"</text></outputEntry></rule>
     </decisionTable>
   </decision>
 
@@ -103,7 +103,7 @@
         <inputExpression typeRef="string"><text>mainActivity</text></inputExpression>
       </input>
       <output id="out_bcc_ctp" name="CTP" typeRef="string"/>
-      <rule id="bcc_r1"><inputEntry><text>"ARTISANAL"</text></inputEntry><outputEntry><text>"CTP800"</text></outputEntry></rule>
+      <rule id="bcc_r1"><inputEntry><text>"ARTISANAL"</text></inputEntry><outputEntry><text>"800"</text></outputEntry></rule>
       <!-- COMMERCIAL and LIBERAL: no CCICMA for BICP — no rule needed (COLLECT returns empty) -->
     </decisionTable>
   </decision>
